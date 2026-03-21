@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice With Calculation</title>
+</head>
+<style>
+      body {
+        background: #e6e6e6;
+        padding: 30px;
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: bold;
+      }
+      .outer {
+        border: 3px solid #222;
+        border-radius: 18px;
+        padding: 25px;
+        background: #f3f3f3;
+      }
+      .wrapper {
+        display: flex;
+        gap: 30px;
+        justify-content: center;
+        align-items: flex-start;
+      }
+      .invoice {
+        background: #fff;
+        width: 480px;
+        border-radius: 8px;
+        padding: 18px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+      .invoice-title {
+        text-align: center;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #555;
+      }
+      .info-table td {
+        padding: 7px;
+      }
+      input {
+        width: 100%;
+        padding: 1px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background: #fafafa;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+      th {
+        background: #cfe9df;
+        padding: 6px;
+        font-weight: bold;
+        border: 1px solid rgba(0, 0, 0, 0.07);
+      }
+      td {
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        padding: 6px;
+        text-align: center;
+      }
+      .small-btn {
+        width: 24px;
+        height: 24px;
+        border: none;
+        color: #fff;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+      .add {
+        background: #28a745;
+      }
+      .delete {
+        background: #dc3545;
+      }
+      .side-total {
+        width: 120px;
+        margin-left: auto;
+        margin-top: 10px;
+      }
+      .side-total div {
+        background: #cecece;
+        padding: 6px;
+        margin-bottom: 5px;
+        text-align: right;
+        font-size: 13px;
+        border-radius: 4px;
+      }
+</style>
+<body>
+    <h1>Invoice With Calculation</h1>
+    <div class="outer">
+        <div class="wrapper">
+            <div class="invoice">
+                <div class="invoice-title">INVOICE</div>
+
+                <table class="info-table" >
+                    <tr>
+                        <td style="background: #f1f1f1">Customer</td>
+                        <td>
+                            <input type="text" id="customer" placeholder="Enter Your Name" oninput="updatePreview()" />
+                        </td>
+                        <td>Inv No.</td>
+                        <td>
+                            <input type="text" id="inv" value="101" oninput="updatePreview()">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="background: #f1f1f1">Address</td>
+                        <td>
+                            <input type="text" id="address" placeholder="Enter Your Address"
+                                oninput="updatePreview()">
+                        </td>
+                        <td>Inv Date</td>
+                        <td><input type="date" id="date" oninput="updatePreview()" /></td>
+                    </tr>
+
+                    <tr>
+                        <td style="background: #f1f1f1">City</td>
+                        <td>
+                            <input type="text" id="city" placeholder="Enter City" oninput="updatePreview()" />
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+                 
+                <table >
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Particular</th>
+                            <th>Qty</th>
+                            <th>Rate</th>
+                            <th>Amount</th>
+                            <th>
+                                <button class="small-btn add" onclick="addRow()">+</button>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemBody"></tbody>
+                </table>
+
+                <div class="side-total">
+                    <div>Total ₹ <span id="total">0</span></div>
+                    <div>GST (18%) ₹ <span id="gst">0</span></div>
+                    <div>
+                        <b>Net ₹ <span id="net">0</span></b>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="invoice">
+                <div class="invoice-title">INVOICE</div>
+
+                <table class="info-table">
+                    <tr>
+                        <td>Customer</td>
+                        <td id="pCustomer"></td>
+                        <td>Inv No.</td>
+                        <td id="pInv"></td>
+                    </tr>
+
+                    <tr>
+                        <td>Address</td>
+                        <td id="pAddress"></td>
+                        <td>Inv Date</td>
+                        <td id="pDate"></td>
+                    </tr>
+
+                    <tr>
+                        <td>City</td>
+                        <td id="pCity"></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Particular</th>
+                            <th>Qty</th>
+                            <th>Rate</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="previewBody"></tbody>
+                </table>
+
+                <div class="side-total">
+                    <div>Total ₹ <span id="pTotal">0</span></div>
+                    <div>GST ₹ <span id="pGst">0</span></div>
+                    <div>
+                        <b>Net ₹ <span id="pNet">0</span></b>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+     <script>
+      let rowCount = 0;
+
+      function addRow() {
+        rowCount++;
+        const tbody = document.getElementById("itemBody");
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+    <td>${rowCount}</td>
+    <td><input type="text" class="name" oninput="calculate()"></td>
+    <td><input type="number" class="qty" min="1" value="1" oninput="calculate()"></td>
+    <td><input type="number" class="rate" min="0" value="0" oninput="calculate()"></td>
+    <td class="amount">0</td>
+    <td><button class="small-btn delete" onclick="deleteRow(this)">x</button></td>
+  `;
+        tbody.appendChild(row);
+      }
+
+      function deleteRow(btn) {
+        btn.parentElement.parentElement.remove();
+        calculate();
+      }
+
+      function calculate() {
+        let total = 0;
+        const rows = document.querySelectorAll("#itemBody tr");
+        const preview = document.getElementById("previewBody");
+        preview.innerHTML = "";
+
+        rows.forEach((row, index) => {
+          const qty = parseFloat(row.querySelector(".qty").value) || 0;
+          const rate = parseFloat(row.querySelector(".rate").value) || 0;
+          const name = row.querySelector(".name").value;
+
+          const amount = qty * rate;
+          row.querySelector(".amount").innerText = amount.toFixed(2);
+          total += amount;
+
+          preview.innerHTML += `
+      <tr>
+        <td>${index + 1}</td>
+        <td>${name}</td>
+        <td>${qty}</td>
+        <td>${rate}</td>
+        <td>${amount.toFixed(2)}</td>
+      </tr>
+    `;
+        });
+
+        const gst = total * 0.18;
+        const net = total + gst;
+
+        document.getElementById("total").innerText = total.toFixed(2);
+        document.getElementById("gst").innerText = gst.toFixed(2);
+        document.getElementById("net").innerText = net.toFixed(2);
+
+        document.getElementById("pTotal").innerText = total.toFixed(2);
+        document.getElementById("pGst").innerText = gst.toFixed(2);
+        document.getElementById("pNet").innerText = net.toFixed(2);
+
+        updatePreview();
+      }
+
+      function updatePreview() {
+        document.getElementById("pCustomer").innerText = customer.value;
+        document.getElementById("pInv").innerText = inv.value;
+        document.getElementById("pAddress").innerText = address.value;
+        document.getElementById("pCity").innerText = city.value;
+        document.getElementById("pDate").innerText = date.value;
+      }
+      function printInvoice() {
+        window.print();
+
+        setTimeout(() => {
+          resetInvoice();
+        }, 500);
+      }
+
+      function resetInvoice() {
+        
+        let currentInv = parseInt(document.getElementById("inv").value) || 100;
+        document.getElementById("inv").value = currentInv + 1;
+
+      
+        document.getElementById("customer").value = "";
+        document.getElementById("address").value = "";
+        document.getElementById("city").value = "";
+        document.getElementById("date").value = "";
+
+        document.getElementById("itemBody").innerHTML = "";
+        document.getElementById("previewBody").innerHTML = "";
+
+        document.getElementById("total").innerText = "0";
+        document.getElementById("gst").innerText = "0";
+        document.getElementById("net").innerText = "0";
+
+        document.getElementById("pTotal").innerText = "0";
+        document.getElementById("pGst").innerText = "0";
+        document.getElementById("pNet").innerText = "0";
+
+        updatePreview();
+      }
+    </script>
+</body>
+
+</html>
