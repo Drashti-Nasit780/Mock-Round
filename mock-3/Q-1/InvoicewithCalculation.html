@@ -105,11 +105,11 @@
                     <tr>
                         <td style="background: #f1f1f1">Customer</td>
                         <td>
-                            <input type="text" id="customer" placeholder="Enter Your Name" oninput="updatePreview()" />
+                            <input type="text" id="customer" placeholder="Enter Your Name" onchange="updatePreview()" />
                         </td>
                         <td>Inv No.</td>
                         <td>
-                            <input type="text" id="inv" value="101" oninput="updatePreview()">
+                            <input type="text" id="inv" value="101" onchange="updatePreview()">
                         </td>
                     </tr>
                     <tr>
@@ -125,7 +125,7 @@
                     <tr>
                         <td style="background: #f1f1f1">City</td>
                         <td>
-                            <input type="text" id="city" placeholder="Enter City" oninput="updatePreview()" />
+                            <input type="text" id="city" placeholder="Enter City" onchange="updatePreview()" />
                         </td>
                         <td></td>
                         <td></td>
@@ -217,8 +217,8 @@
         row.innerHTML = `
     <td>${rowCount}</td>
     <td><input type="text" class="name" oninput="calculate()"></td>
-    <td><input type="number" class="qty" min="1" value="1" oninput="calculate()"></td>
-    <td><input type="number" class="rate" min="0" value="0" oninput="calculate()"></td>
+    <td><input type="number" class="qty" min="1" value="1" onchange="calculate()"></td>
+    <td><input type="number" class="rate" min="0" value="0" onchange="calculate()"></td>
     <td class="amount">0</td>
     <td><button class="small-btn delete" onclick="deleteRow(this)">x</button></td>
   `;
